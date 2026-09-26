@@ -1,0 +1,43 @@
+# Hermes Jev Capability Router
+
+An advisory-only [Hermes Agent](https://github.com/NousResearch/hermes-agent) plugin that uses TypeSafe Jev through OpenRouter's Decisions API to recommend:
+
+- a Hermes profile for a request;
+- relevant skills within that profile; and
+- the smallest useful set of already available capabilities.
+
+It never delegates work, changes the session model, enables a plugin, invokes an MCP server, or performs an external action. The host agent and Hermes policy remain responsible for those actions.
+
+## Status
+
+`0.1.0` is a tested routing foundation. It supports a live, file-derived profile/skill catalog and a pluggable Jev transport. Runtime tool, MCP and plugin discovery is deliberately exposed as an advisory extension point; automatic tool-schema pruning is not enabled in this release.
+
+## Install
+
+After publishing, install normally through Hermes:
+
+```sh
+hermes plugins install jonaslinde/hermes-jev-capability-router --no-enable
+hermes plugins enable jev-capability-router
+```
+
+Set `OPENROUTER_API_KEY` in the target profile's secret environment. The plugin uses the same OpenRouter Decisions endpoint and `typesafe/jev-1.13` model as the local pilot. It sends only the request plus the eligible catalog entries needed for the decision; it never reads or transmits `.env` files.
+
+## Validation
+
+```sh
+python3 -m unittest discover -s tests -v
+hermes plugins validate .
+hermes plugins compat .
+```
+
+The unit suite uses a fake transport and makes no network calls. `tests/live_smoke.py` is opt-in and requires `OPENROUTER_API_KEY`.
+
+## Safety and privacy
+
+- Results are recommendations, with `no_match` and `human_review` valid outcomes.
+- A failed or malformed Jev response is fail-open: no recommendation is returned.
+- Secrets and profile `.env` files are excluded from catalog discovery.
+- Keep e-mail routing disabled until an explicit redaction policy is added.
+
+See [SECURITY.md](SECURITY.md) and [baseline/README.md](baseline/README.md).
