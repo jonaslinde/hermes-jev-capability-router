@@ -21,7 +21,7 @@ hermes plugins install jonaslinde/hermes-jev-capability-router --no-enable
 hermes plugins enable jev-capability-router
 ```
 
-Set `OPENROUTER_API_KEY` in the target profile's secret environment. The plugin uses the same OpenRouter Decisions endpoint and `typesafe/jev-1.13` model as the local pilot. It sends only the request plus the eligible catalog entries needed for the decision; it never reads or transmits `.env` files.
+Set `OPENROUTER_API_KEY` in the target profile's secret environment. The plugin uses the same OpenRouter Decisions endpoint and `typesafe/jev-1.13` model as the local pilot. In a multiplexed gateway the key is resolved at tool-call time from that profile's secret scope, not from the process environment. It sends only the request plus the eligible catalog entries needed for the decision; it never reads or transmits `.env` files.
 
 ## Validation
 

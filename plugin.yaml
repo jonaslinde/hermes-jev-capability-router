@@ -9,10 +9,9 @@ provides_tools:
   - jev_route_profile
   - jev_suggest_skills
   - jev_router_status
-requires_env:
-  - name: OPENROUTER_API_KEY
-    description: OpenRouter key used only for TypeSafe Jev Decisions requests.
-    secret: true
+# Do not declare OPENROUTER_API_KEY in requires_env: Hermes' multiplexed
+# gateway checks this field against process env, while this plugin resolves the
+# active profile's secret at call time via agent.secret_scope.get_secret().
 config_schema:
   model:
     type: str
