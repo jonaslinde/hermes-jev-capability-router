@@ -1,7 +1,9 @@
 import unittest
+from types import ModuleType
+from unittest.mock import patch
 
 from catalog import Candidate
-from routing import recommend
+from routing import configured_transport, recommend
 
 
 class FakeTransport:
@@ -31,3 +33,10 @@ class RoutingTests(unittest.TestCase):
     def test_empty_catalog(self):
         result = recommend(FakeTransport({}), "anything", [], model="m", threshold=.7, kind="profile")
         self.assertEqual(result.reason, "no eligible candidates")
+
+    def test_uses_hermes_scoped_secret_resolver(self):
+        agent = ModuleType("agent")
+        secret_scope = ModuleType("agent.secret_scope")
+        secret_scope.get_secret = lambda name, default="": "profile-only-key"
+        with patch.dict("sys.modules", {"agent": agent, "agent.secret_scope": secret_scope}):
+            self.assertIsNotNone(configured_transport({}))

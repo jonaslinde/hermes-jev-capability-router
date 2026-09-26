@@ -3,7 +3,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import json
-import os
 from typing import Protocol
 from urllib.request import Request, urlopen
 
@@ -57,5 +56,12 @@ def recommend(transport: Transport, request: str, candidates: list[Candidate], *
 
 
 def configured_transport(settings: dict) -> OpenRouterTransport | None:
-    key = os.getenv("OPENROUTER_API_KEY")
+    # Gateway multiplexing deliberately keeps each profile's .env out of
+    # os.environ. Hermes' scoped resolver returns only the active profile key.
+    try:
+        from agent.secret_scope import get_secret
+        key = get_secret("OPENROUTER_API_KEY", "")
+    except ImportError:  # standalone development/tests outside Hermes
+        import os
+        key = os.getenv("OPENROUTER_API_KEY", "")
     return OpenRouterTransport(settings.get("endpoint", "https://openrouter.ai/api/alpha/decisions"), key) if key else None
