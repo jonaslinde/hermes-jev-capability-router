@@ -14,12 +14,20 @@ It never delegates work, changes the session model, enables a plugin, invokes an
 
 ## Install
 
-After publishing, install normally through Hermes:
+Install the verified release with Hermes. In a multiplexed gateway, native
+plugins are profile-local: repeat these commands for every profile that should
+be able to make Jev recommendations (the default profile is not shared with
+named profiles).
 
 ```sh
-hermes plugins install jonaslinde/hermes-jev-capability-router --no-enable
-hermes plugins enable jev-capability-router
+hermes -p <profile> plugins install jonaslinde/hermes-jev-capability-router \
+  --ref <full-40-character-commit-sha> --no-enable
+hermes -p <profile> plugins enable jev-capability-router
+hermes -p <profile> tools enable jev_capability_router --platform telegram
 ```
+
+Use a full commit SHA for a reproducible rollout. A newer release can later be
+adopted deliberately by updating the plugin and re-validating it.
 
 Set `OPENROUTER_API_KEY` in the target profile's secret environment. The plugin uses the same OpenRouter Decisions endpoint and `typesafe/jev-1.13` model as the local pilot. In a multiplexed gateway the key is resolved at tool-call time from that profile's secret scope, not from the process environment. It sends only the request plus the eligible catalog entries needed for the decision; it never reads or transmits `.env` files.
 
