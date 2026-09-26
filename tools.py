@@ -27,7 +27,7 @@ class Handlers:
     def suggest_skills(self, params, **_kwargs):
         settings, transport = self._settings(), configured_transport(self._settings())
         if not transport: return json.dumps({"selected": None, "reason": "OPENROUTER_API_KEY not configured"})
-        return recommend(transport, params["request"], skill_catalog(self._home()/"profiles"/params["profile"]), model=settings.get("model", "typesafe/jev-1.13"), threshold=float(settings.get("skill_confidence", .55)), kind="Hermes skill").json()
+        return recommend(transport, params["request"], skill_catalog(self._home()/"profiles"/params["profile"], request=params["request"], limit=int(settings.get("skill_candidate_limit", 40))), model=settings.get("model", "typesafe/jev-1.13"), threshold=float(settings.get("skill_confidence", .55)), kind="Hermes skill").json()
     def status(self, _params, **_kwargs): return json.dumps({"profiles": len(profile_catalog(self._home())), "advisory_only": True, "transport_configured": configured_transport(self._settings()) is not None})
 
 def make_handlers(ctx): return Handlers(ctx)

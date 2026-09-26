@@ -1,5 +1,5 @@
 name: jev-capability-router
-version: "0.1.0"
+version: "0.1.1"
 description: Advisory Jev routing for Hermes profiles, skills, and available capabilities.
 author: Jonas Linde
 license: MIT
@@ -25,6 +25,9 @@ config_schema:
   skill_confidence:
     type: float
     default: 0.55
+  skill_candidate_limit:
+    type: int
+    default: 40
   profile_excerpt_chars:
     type: int
     default: 1200

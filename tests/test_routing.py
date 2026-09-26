@@ -30,6 +30,16 @@ class RoutingTests(unittest.TestCase):
         self.assertIsNone(result.selected)
         self.assertIn("unavailable", result.reason)
 
+    def test_http_error_exposes_only_status_code(self):
+        from urllib.error import HTTPError
+
+        class FailingTransport:
+            def evaluate(self, _payload):
+                raise HTTPError("https://example.test", 401, "Unauthorized", {}, None)
+
+        result = recommend(FailingTransport(), "request", self.candidates, model="m", threshold=.7, kind="profile")
+        self.assertEqual(result.reason, "Jev request failed (HTTP 401)")
+
     def test_empty_catalog(self):
         result = recommend(FakeTransport({}), "anything", [], model="m", threshold=.7, kind="profile")
         self.assertEqual(result.reason, "no eligible candidates")

@@ -4,6 +4,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 import json
 from typing import Protocol
+from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 
 try:  # Hermes loads this as a package; direct tests load it from the repo root.
@@ -48,6 +49,8 @@ def recommend(transport: Transport, request: str, candidates: list[Candidate], *
         selected = answer.get("choice") or answer.get("selected") or answer.get("value")
         probabilities = answer.get("probabilities") or {}
         confidence = float(answer.get("confidence", max(probabilities.values(), default=0.0)))
+    except HTTPError as error:
+        return Recommendation(None, 0.0, {}, f"Jev request failed (HTTP {error.code})")
     except (OSError, ValueError, TypeError, KeyError):
         return Recommendation(None, 0.0, {}, "Jev unavailable or malformed response")
     if selected == "no_match" or selected not in criteria or confidence < threshold:

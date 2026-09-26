@@ -10,7 +10,7 @@ It never delegates work, changes the session model, enables a plugin, invokes an
 
 ## Status
 
-`0.1.0` is a tested routing foundation. It supports a live, file-derived profile/skill catalog and a pluggable Jev transport. Runtime tool, MCP and plugin discovery is deliberately exposed as an advisory extension point; automatic tool-schema pruning is not enabled in this release.
+`0.1.1` is a tested routing foundation. It supports a live, file-derived profile/skill catalog and a pluggable Jev transport. Skill routing recursively discovers active (non-archived) skills, then sends Jev only the 40 lexically most relevant candidates to control token cost. Runtime tool, MCP and plugin discovery is deliberately exposed as an advisory extension point; automatic tool-schema pruning is not enabled in this release.
 
 ## Install
 
